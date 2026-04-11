@@ -1,8 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import {
-  Shield, Download, Play, FolderOpen, Zap, Share2, Lock, Camera,
-  Globe, Film, LayoutGrid, Cpu, Smartphone, Settings,
+  Lock, Camera, Globe, Film, LayoutGrid, Zap, Share2, Settings,
 } from "lucide-react";
 
 const features = [
@@ -66,18 +65,34 @@ const FeatureCard = ({ feature, index }: { feature: typeof features[0]; index: n
       initial={{ opacity: 0, y: 40, scale: 0.95 }}
       animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
       transition={{ duration: 0.6, delay: index * 0.08 }}
-      whileHover={{ y: -8, scale: 1.02 }}
+      whileHover={{ y: -8, scale: 1.03 }}
       className="group relative bg-gradient-card rounded-2xl p-6 glow-border overflow-hidden cursor-default"
     >
-      {/* Hover glow */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
+      {/* Hover shine effect */}
+      <motion.div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+        style={{
+          background: "linear-gradient(105deg, transparent 40%, hsl(270 80% 60% / 0.06) 45%, hsl(270 80% 60% / 0.12) 50%, hsl(270 80% 60% / 0.06) 55%, transparent 60%)",
+        }}
+      />
 
-      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 relative z-10`}>
-        <feature.icon className="w-6 h-6 text-primary-foreground" />
+      {/* Icon with pulse ring */}
+      <div className="relative mb-4">
+        <motion.div
+          animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0, 0.3] }}
+          transition={{ duration: 3, repeat: Infinity, delay: index * 0.5 }}
+          className={`absolute inset-0 w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} blur-md`}
+        />
+        <div className={`relative w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center`}>
+          <feature.icon className="w-6 h-6 text-primary-foreground" />
+        </div>
       </div>
 
       <h3 className="font-display text-lg font-semibold mb-2 relative z-10">{feature.title}</h3>
       <p className="text-sm text-muted-foreground leading-relaxed relative z-10">{feature.description}</p>
+
+      {/* Bottom border glow on hover */}
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/0 group-hover:via-primary/40 to-transparent transition-all duration-500" />
     </motion.div>
   );
 };
@@ -87,7 +102,10 @@ const FeaturesSection = () => {
   const titleInView = useInView(titleRef, { once: true, margin: "-100px" });
 
   return (
-    <section className="relative py-24 sm:py-32">
+    <section id="features" className="relative py-24 sm:py-32">
+      {/* Section divider line */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-16 bg-gradient-to-b from-transparent to-border" />
+
       <div className="container mx-auto px-6">
         <motion.div
           ref={titleRef}
@@ -96,8 +114,15 @@ const FeaturesSection = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <span className="text-sm font-semibold text-primary uppercase tracking-widest">Features</span>
-          <h2 className="font-display text-4xl sm:text-5xl font-bold mt-3 mb-4">
+          <motion.span
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={titleInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ type: "spring", delay: 0.2 }}
+            className="inline-block text-sm font-semibold text-primary uppercase tracking-widest glass px-4 py-1.5 rounded-full"
+          >
+            Features
+          </motion.span>
+          <h2 className="font-display text-4xl sm:text-5xl font-bold mt-5 mb-4">
             Everything you need.
             <br />
             <span className="text-gradient-primary">Nothing you don't.</span>
