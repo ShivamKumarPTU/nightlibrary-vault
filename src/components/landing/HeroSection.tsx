@@ -4,6 +4,7 @@ import { Shield, Download, Play, ChevronDown, Sparkles } from "lucide-react";
 import screenshotHome from "@/assets/screenshot-home.png";
 import screenshotVault from "@/assets/screenshot-vault.png";
 import screenshotCompleted from "@/assets/screenshot-completed.png";
+import HeroVideoBackground from "./HeroVideoBackground";
 
 const TextReveal = ({ children, delay = 0 }: { children: string; delay?: number }) => (
   <span className="inline-block overflow-hidden">
@@ -28,11 +29,14 @@ const HeroSection = () => {
 
   return (
     <section ref={ref} className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+      {/* Background video */}
+      <HeroVideoBackground />
+
       {/* Radial spotlight */}
       <div
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-[1]"
         style={{
-          background: "radial-gradient(ellipse 80% 60% at 50% 30%, hsl(270 80% 60% / 0.08) 0%, transparent 60%)",
+          background: "radial-gradient(ellipse 80% 60% at 50% 30%, hsl(270 80% 60% / 0.12) 0%, transparent 60%)",
         }}
       />
 
