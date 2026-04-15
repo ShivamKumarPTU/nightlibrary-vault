@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Quote, Star } from "lucide-react";
 
@@ -28,17 +28,28 @@ const testimonials = [
 
 const TestimonialCard = ({ t, index }: { t: typeof testimonials[0]; index: number }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-50px" });
+  const inView = useInView(ref, { once: false, margin: "-30px" });
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [100, 0, 0, -50]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.75, 1], [0, 1, 1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.2, 0.75, 1], [0.8, 1, 1, 0.85]);
+  const rotateY = useTransform(
+    scrollYProgress,
+    [0, 0.25, 0.75, 1],
+    [index === 0 ? 15 : index === 2 ? -15 : 0, 0, 0, index === 0 ? -10 : index === 2 ? 10 : 0]
+  );
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 60, rotateX: 15, filter: "blur(6px)" }}
-      animate={inView ? { opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)" } : {}}
-      transition={{ duration: 0.8, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
+      style={{ y, opacity, scale, rotateY, perspective: 1200 }}
       whileHover={{ y: -8, scale: 1.03, boxShadow: "0 20px 60px hsl(270 80% 60% / 0.1)" }}
-      className="group relative bg-gradient-card rounded-2xl p-6 glow-border overflow-hidden"
-      style={{ perspective: "1000px" }}
+      className="group relative bg-gradient-card rounded-2xl p-6 glow-border overflow-hidden will-change-transform"
     >
       {/* Shimmer effect */}
       <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -56,7 +67,7 @@ const TestimonialCard = ({ t, index }: { t: typeof testimonials[0]; index: numbe
           <motion.div
             key={i}
             initial={{ opacity: 0, scale: 0, rotate: -180 }}
-            animate={inView ? { opacity: 1, scale: 1, rotate: 0 } : {}}
+            animate={inView ? { opacity: 1, scale: 1, rotate: 0 } : { opacity: 0, scale: 0, rotate: -180 }}
             transition={{ delay: index * 0.15 + i * 0.08 + 0.3, type: "spring", stiffness: 200 }}
           >
             <Star className="w-4 h-4 fill-glow-warm text-glow-warm" />
@@ -67,7 +78,6 @@ const TestimonialCard = ({ t, index }: { t: typeof testimonials[0]; index: numbe
       <p className="text-foreground/90 text-sm leading-relaxed mb-5 relative z-10">"{t.text}"</p>
 
       <div className="flex items-center gap-3 relative z-10">
-        {/* Avatar */}
         <motion.div
           whileHover={{ scale: 1.1 }}
           className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xs font-bold text-primary-foreground"
@@ -91,11 +101,20 @@ const TestimonialCard = ({ t, index }: { t: typeof testimonials[0]; index: numbe
 };
 
 const TestimonialsSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
-  const titleInView = useInView(titleRef, { once: true, margin: "-100px" });
+  const titleInView = useInView(titleRef, { once: false, margin: "-60px" });
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const titleY = useTransform(scrollYProgress, [0, 0.3], [50, 0]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
 
   return (
-    <section className="relative py-24 sm:py-32">
+    <section ref={sectionRef} className="relative py-24 sm:py-32">
       {/* Background accent */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
@@ -108,14 +127,12 @@ const TestimonialsSection = () => {
       <div className="container mx-auto px-6">
         <motion.div
           ref={titleRef}
-          initial={{ opacity: 0, y: 40 }}
-          animate={titleInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          style={{ y: titleY, opacity: titleOpacity }}
           className="text-center mb-16"
         >
           <motion.span
             initial={{ opacity: 0, scale: 0.5 }}
-            animate={titleInView ? { opacity: 1, scale: 1 } : {}}
+            animate={titleInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
             transition={{ type: "spring", delay: 0.2 }}
             className="inline-block text-sm font-semibold text-primary uppercase tracking-widest glass px-4 py-1.5 rounded-full premium-glow"
           >

@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import {
   Lock, Camera, Globe, Film, LayoutGrid, Zap, Share2, Settings,
@@ -17,19 +17,27 @@ const features = [
 
 const FeatureCard = ({ feature, index }: { feature: typeof features[0]; index: number }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const isInView = useInView(ref, { once: false, margin: "-40px" });
   const [hovered, setHovered] = useState(false);
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [80, 0, 0, -40]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.75, 1], [0, 1, 1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.2, 0.75, 1], [0.85, 1, 1, 0.9]);
+  const rotateX = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [12, 0, 0, -8]);
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 50, scale: 0.9 }}
-      animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-      transition={{ duration: 0.7, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-      whileHover={{ y: -10, scale: 1.04 }}
+      style={{ y, opacity, scale, rotateX, perspective: 1200 }}
+      whileHover={{ y: -12, scale: 1.05 }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      className="group relative bg-gradient-card rounded-2xl p-6 glow-border overflow-hidden cursor-default"
+      className="group relative bg-gradient-card rounded-2xl p-6 glow-border overflow-hidden cursor-default will-change-transform"
     >
       {/* Animated background gradient on hover */}
       <motion.div
@@ -87,25 +95,32 @@ const FeatureCard = ({ feature, index }: { feature: typeof features[0]; index: n
 };
 
 const FeaturesSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
-  const titleInView = useInView(titleRef, { once: true, margin: "-100px" });
+  const titleInView = useInView(titleRef, { once: false, margin: "-60px" });
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const titleY = useTransform(scrollYProgress, [0, 0.3], [60, 0]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
 
   return (
-    <section id="features" className="relative py-24 sm:py-32">
+    <section id="features" ref={sectionRef} className="relative py-24 sm:py-32">
       {/* Ambient glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary/3 blur-[200px] pointer-events-none" />
 
       <div className="container mx-auto px-6">
         <motion.div
           ref={titleRef}
-          initial={{ opacity: 0, y: 40 }}
-          animate={titleInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          style={{ y: titleY, opacity: titleOpacity }}
           className="text-center mb-16"
         >
           <motion.span
             initial={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }}
-            animate={titleInView ? { opacity: 1, scale: 1, filter: "blur(0px)" } : {}}
+            animate={titleInView ? { opacity: 1, scale: 1, filter: "blur(0px)" } : { opacity: 0, scale: 0.5, filter: "blur(10px)" }}
             transition={{ type: "spring", delay: 0.2 }}
             className="inline-block text-sm font-semibold text-primary uppercase tracking-widest glass px-4 py-1.5 rounded-full premium-glow"
           >
@@ -118,7 +133,7 @@ const FeaturesSection = () => {
           </h2>
           <motion.p
             initial={{ opacity: 0 }}
-            animate={titleInView ? { opacity: 1 } : {}}
+            animate={titleInView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ delay: 0.4 }}
             className="text-muted-foreground text-lg max-w-2xl mx-auto"
           >
