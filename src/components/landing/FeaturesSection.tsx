@@ -69,8 +69,23 @@ const FeatureCard = ({ feature, index }: { feature: typeof features[0]; index: n
         </motion.div>
       </div>
 
-      <h3 className="font-display text-lg font-semibold mb-2 relative z-10">{feature.title}</h3>
-      <p className="text-sm text-muted-foreground leading-relaxed relative z-10">{feature.description}</p>
+      {/* Animated text reveal */}
+      <motion.h3
+        initial={{ opacity: 0, x: -10 }}
+        animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="font-display text-lg font-semibold mb-2 relative z-10"
+      >
+        {feature.title}
+      </motion.h3>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="text-sm text-muted-foreground leading-relaxed relative z-10"
+      >
+        {feature.description}
+      </motion.p>
 
       {/* Animated bottom border */}
       <motion.div
@@ -94,13 +109,13 @@ const FeatureCard = ({ feature, index }: { feature: typeof features[0]; index: n
   );
 };
 
-const FeaturesSection = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
+// Scroll-triggered section title with word animation
+const SectionTitle = ({ badge, title1, title2, subtitle }: { badge: string; title1: string; title2: string; subtitle: string }) => {
   const titleRef = useRef<HTMLDivElement>(null);
   const titleInView = useInView(titleRef, { once: false, margin: "-60px" });
 
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: titleRef,
     offset: ["start end", "end start"],
   });
 
@@ -108,38 +123,65 @@ const FeaturesSection = () => {
   const titleOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
 
   return (
+    <motion.div
+      ref={titleRef}
+      style={{ y: titleY, opacity: titleOpacity }}
+      className="text-center mb-16"
+    >
+      <motion.span
+        initial={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }}
+        animate={titleInView ? { opacity: 1, scale: 1, filter: "blur(0px)" } : { opacity: 0, scale: 0.5, filter: "blur(10px)" }}
+        transition={{ type: "spring", delay: 0.2 }}
+        className="inline-block text-sm font-semibold text-primary uppercase tracking-widest glass px-4 py-1.5 rounded-full premium-glow"
+      >
+        {badge}
+      </motion.span>
+      <h2 className="font-display text-4xl sm:text-5xl font-bold mt-5 mb-4">
+        <motion.span
+          initial={{ opacity: 0, y: 20 }}
+          animate={titleInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.3, duration: 0.6 }}
+          className="inline-block"
+        >
+          {title1}
+        </motion.span>
+        <br />
+        <motion.span
+          initial={{ opacity: 0, y: 20 }}
+          animate={titleInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.5, duration: 0.6 }}
+          className="inline-block text-gradient-primary"
+        >
+          {title2}
+        </motion.span>
+      </h2>
+      <motion.p
+        initial={{ opacity: 0, filter: "blur(4px)" }}
+        animate={titleInView ? { opacity: 1, filter: "blur(0px)" } : { opacity: 0, filter: "blur(4px)" }}
+        transition={{ delay: 0.6 }}
+        className="text-muted-foreground text-lg max-w-2xl mx-auto"
+      >
+        {subtitle}
+      </motion.p>
+    </motion.div>
+  );
+};
+
+const FeaturesSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  return (
     <section id="features" ref={sectionRef} className="relative py-24 sm:py-32">
       {/* Ambient glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary/3 blur-[200px] pointer-events-none" />
 
       <div className="container mx-auto px-6">
-        <motion.div
-          ref={titleRef}
-          style={{ y: titleY, opacity: titleOpacity }}
-          className="text-center mb-16"
-        >
-          <motion.span
-            initial={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }}
-            animate={titleInView ? { opacity: 1, scale: 1, filter: "blur(0px)" } : { opacity: 0, scale: 0.5, filter: "blur(10px)" }}
-            transition={{ type: "spring", delay: 0.2 }}
-            className="inline-block text-sm font-semibold text-primary uppercase tracking-widest glass px-4 py-1.5 rounded-full premium-glow"
-          >
-            Features
-          </motion.span>
-          <h2 className="font-display text-4xl sm:text-5xl font-bold mt-5 mb-4">
-            Everything you need.
-            <br />
-            <span className="text-gradient-primary">Nothing you don't.</span>
-          </h2>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={titleInView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-muted-foreground text-lg max-w-2xl mx-auto"
-          >
-            A complete media vault with powerful tools, all wrapped in a beautiful minimal interface.
-          </motion.p>
-        </motion.div>
+        <SectionTitle
+          badge="Features"
+          title1="Everything you need."
+          title2="Nothing you don't."
+          subtitle="A complete media vault with powerful tools, all wrapped in a beautiful minimal interface."
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {features.map((feature, i) => (
