@@ -1,21 +1,29 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Download, ArrowRight } from "lucide-react";
 import AnimatedCounter from "./AnimatedCounter";
 
 const CTASection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const inView = useInView(ref, { once: false, margin: "-80px" });
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [80, 0, 0, -30]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0.6]);
+  const scale = useTransform(scrollYProgress, [0, 0.25, 0.8, 1], [0.88, 1, 1, 0.95]);
 
   return (
-    <section className="relative py-24 sm:py-32">
+    <section ref={sectionRef} className="relative py-24 sm:py-32">
       <div className="container mx-auto px-6">
         <motion.div
           ref={ref}
-          initial={{ opacity: 0, scale: 0.92, filter: "blur(10px)" }}
-          animate={inView ? { opacity: 1, scale: 1, filter: "blur(0px)" } : {}}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="relative rounded-3xl overflow-hidden"
+          style={{ y, opacity, scale }}
+          className="relative rounded-3xl overflow-hidden will-change-transform"
         >
           {/* Animated gradient background */}
           <motion.div
@@ -65,7 +73,7 @@ const CTASection = () => {
             {/* Stats row */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ delay: 0.1 }}
               className="flex justify-center gap-12 mb-10"
             >
@@ -89,7 +97,7 @@ const CTASection = () => {
 
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ delay: 0.2 }}
               className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6"
             >
@@ -99,7 +107,7 @@ const CTASection = () => {
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ delay: 0.4 }}
               className="text-primary-foreground/80 text-lg max-w-xl mx-auto mb-10"
             >
@@ -108,7 +116,7 @@ const CTASection = () => {
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ delay: 0.6 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
