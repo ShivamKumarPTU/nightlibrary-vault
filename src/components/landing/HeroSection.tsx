@@ -1,29 +1,59 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import { Download, Play, ChevronDown, Sparkles } from "lucide-react";
+import { Download, Play, Sparkles } from "lucide-react";
 import screenshotHome from "@/assets/screenshot-home.png";
 import screenshotVault from "@/assets/screenshot-vault.png";
 import screenshotCompleted from "@/assets/screenshot-completed.png";
 import HeroVideoBackground from "./HeroVideoBackground";
 import AnimatedCounter from "./AnimatedCounter";
 
-const TextReveal = ({ children, delay = 0 }: { children: string; delay?: number }) => (
-  <span className="inline-block overflow-hidden">
-    <motion.span
-      initial={{ y: "110%", opacity: 0 }}
-      animate={{ y: "0%", opacity: 1 }}
-      transition={{ duration: 0.8, delay, ease: [0.33, 1, 0.68, 1] }}
-      className="inline-block"
-    >
-      {children}
-    </motion.span>
+// Character-by-character text reveal
+const CharReveal = ({ children, delay = 0, className = "" }: { children: string; delay?: number; className?: string }) => (
+  <span className={`inline-flex overflow-hidden ${className}`}>
+    {children.split("").map((char, i) => (
+      <motion.span
+        key={i}
+        initial={{ y: "120%", opacity: 0, rotateX: 90 }}
+        animate={{ y: "0%", opacity: 1, rotateX: 0 }}
+        transition={{
+          duration: 0.6,
+          delay: delay + i * 0.03,
+          ease: [0.215, 0.61, 0.355, 1],
+        }}
+        className="inline-block"
+        style={{ transformOrigin: "bottom" }}
+      >
+        {char === " " ? "\u00A0" : char}
+      </motion.span>
+    ))}
+  </span>
+);
+
+// Word-by-word reveal with blur
+const WordReveal = ({ children, delay = 0, className = "" }: { children: string; delay?: number; className?: string }) => (
+  <span className={`inline-flex flex-wrap gap-x-[0.3em] overflow-hidden ${className}`}>
+    {children.split(" ").map((word, i) => (
+      <motion.span
+        key={i}
+        initial={{ y: "100%", opacity: 0, filter: "blur(8px)" }}
+        animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
+        transition={{
+          duration: 0.7,
+          delay: delay + i * 0.08,
+          ease: [0.33, 1, 0.68, 1],
+        }}
+        className="inline-block"
+      >
+        {word}
+      </motion.span>
+    ))}
   </span>
 );
 
 const GlowingButton = ({ children, primary = false, icon: Icon, delay = 0 }: any) => (
   <motion.button
-    initial={{ opacity: 0, y: 30 }}
-    animate={{ opacity: 1, y: 0 }}
+    initial={{ opacity: 0, y: 30, filter: "blur(6px)" }}
+    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
     transition={{ duration: 0.8, delay }}
     whileHover={{
       scale: 1.05,
@@ -33,9 +63,7 @@ const GlowingButton = ({ children, primary = false, icon: Icon, delay = 0 }: any
     }}
     whileTap={{ scale: 0.95 }}
     className={`group relative px-8 py-4 rounded-2xl font-display font-semibold text-lg flex items-center justify-center gap-2 overflow-hidden ${
-      primary
-        ? "bg-gradient-cta text-primary-foreground"
-        : "glass"
+      primary ? "bg-gradient-cta text-primary-foreground" : "glass"
     }`}
   >
     {primary && (
@@ -48,7 +76,6 @@ const GlowingButton = ({ children, primary = false, icon: Icon, delay = 0 }: any
         transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
       />
     )}
-    {/* Ripple on hover */}
     <motion.div
       className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"
       style={{
@@ -57,8 +84,23 @@ const GlowingButton = ({ children, primary = false, icon: Icon, delay = 0 }: any
           : "radial-gradient(circle at center, hsl(270 80% 60% / 0.08) 0%, transparent 70%)",
       }}
     />
-    <Icon className="w-5 h-5 relative z-10" />
+    <motion.span
+      className="relative z-10"
+      animate={primary ? {} : {}}
+    >
+      <Icon className="w-5 h-5" />
+    </motion.span>
     <span className="relative z-10">{children}</span>
+    {/* Magnetic arrow on hover for primary */}
+    {primary && (
+      <motion.span
+        className="relative z-10 ml-1"
+        initial={{ x: -5, opacity: 0 }}
+        whileHover={{ x: 0, opacity: 1 }}
+      >
+        →
+      </motion.span>
+    )}
   </motion.button>
 );
 
@@ -70,6 +112,8 @@ const HeroSection = () => {
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9]);
   const phoneY = useTransform(scrollYProgress, [0, 1], [0, -80]);
   const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
+  const textX = useTransform(scrollYProgress, [0, 0.5], [0, -30]);
+  const phoneRotate = useTransform(scrollYProgress, [0, 0.5], [0, 5]);
 
   return (
     <section ref={ref} className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
@@ -101,7 +145,7 @@ const HeroSection = () => {
       <motion.div style={{ y, opacity, scale }} className="relative z-10 container mx-auto px-6">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
           {/* Left: Copy */}
-          <div className="flex-1 text-center lg:text-left">
+          <motion.div style={{ x: textX }} className="flex-1 text-center lg:text-left">
             <motion.div
               initial={{ opacity: 0, scale: 0.8, filter: "blur(10px)" }}
               animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
@@ -114,7 +158,7 @@ const HeroSection = () => {
                 >
                   <Sparkles className="w-4 h-4 text-glow-warm" />
                 </motion.span>
-                <span className="text-muted-foreground">Privacy-first media vault</span>
+                <WordReveal delay={0.3}>Privacy-first media vault</WordReveal>
                 <motion.span
                   animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
@@ -124,31 +168,33 @@ const HeroSection = () => {
             </motion.div>
 
             <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] mb-6">
-              <TextReveal delay={0.3}>Your Media.</TextReveal>
+              <CharReveal delay={0.4}>Your Media.</CharReveal>
               <br />
               <span className="text-gradient-primary">
-                <TextReveal delay={0.5}>Your Rules.</TextReveal>
+                <CharReveal delay={0.8}>Your Rules.</CharReveal>
               </span>
               <br />
               <span className="text-gradient-warm">
-                <TextReveal delay={0.7}>Your Vault.</TextReveal>
+                <CharReveal delay={1.2}>Your Vault.</CharReveal>
               </span>
             </h1>
 
             <motion.p
               initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ duration: 0.8, delay: 0.9 }}
+              transition={{ duration: 0.8, delay: 1.6 }}
               className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed"
             >
-              Securely store, download, and manage photos, videos & files — with powerful playback and total privacy.
+              <WordReveal delay={1.7}>
+                Securely store, download, and manage photos, videos & files — with powerful playback and total privacy.
+              </WordReveal>
             </motion.p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <GlowingButton primary icon={Download} delay={1.1}>
+              <GlowingButton primary icon={Download} delay={2.0}>
                 Download Now
               </GlowingButton>
-              <GlowingButton icon={Play} delay={1.2}>
+              <GlowingButton icon={Play} delay={2.1}>
                 Watch Demo
               </GlowingButton>
             </div>
@@ -157,7 +203,7 @@ const HeroSection = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1.4 }}
+              transition={{ delay: 2.3 }}
               className="flex gap-8 mt-10 justify-center lg:justify-start"
             >
               {[
@@ -169,7 +215,7 @@ const HeroSection = () => {
                   key={stat.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.4 + i * 0.15 }}
+                  transition={{ delay: 2.3 + i * 0.15 }}
                   whileHover={{ scale: 1.1, y: -4 }}
                   className="text-center cursor-default"
                 >
@@ -180,10 +226,10 @@ const HeroSection = () => {
                 </motion.div>
               ))}
             </motion.div>
-          </div>
+          </motion.div>
 
-          {/* Right: Phone mockups with floating animation */}
-          <motion.div style={{ y: phoneY }} className="flex-1 relative flex justify-center items-center">
+          {/* Right: Phone mockups */}
+          <motion.div style={{ y: phoneY, rotate: phoneRotate }} className="flex-1 relative flex justify-center items-center">
             <div className="relative w-[280px] h-[560px] sm:w-[300px] sm:h-[600px]" style={{ perspective: "1200px" }}>
               {/* Rotating glow ring */}
               <motion.div
@@ -194,8 +240,6 @@ const HeroSection = () => {
                   background: "conic-gradient(from 0deg, transparent 0%, hsl(270 80% 60% / 0.12) 25%, transparent 50%, hsl(190 90% 50% / 0.1) 75%, transparent 100%)",
                 }}
               />
-
-              {/* Second rotating ring (counter direction) */}
               <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
@@ -225,7 +269,7 @@ const HeroSection = () => {
                 <img src={screenshotCompleted} alt="Completed view" className="w-full h-full object-cover" />
               </motion.div>
 
-              {/* Center phone — floating with 3D tilt */}
+              {/* Center phone */}
               <motion.div
                 initial={{ opacity: 0, y: 60, scale: 0.8, rotateX: 20 }}
                 animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
@@ -238,7 +282,6 @@ const HeroSection = () => {
                   className="phone-mockup w-full h-full"
                 >
                   <img src={screenshotHome} alt="NightLibrary Home" className="w-full h-full object-cover" />
-                  {/* Screen reflection */}
                   <motion.div
                     className="absolute inset-0"
                     style={{
@@ -258,10 +301,16 @@ const HeroSection = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2 }}
+          transition={{ delay: 2.5 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
         >
-          <span className="text-xs text-muted-foreground tracking-widest uppercase">Scroll</span>
+          <motion.span
+            animate={{ opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="text-xs text-muted-foreground tracking-widest uppercase"
+          >
+            Scroll to explore
+          </motion.span>
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity }}

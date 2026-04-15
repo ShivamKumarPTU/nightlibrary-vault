@@ -27,12 +27,16 @@ const ScreenshotsSection = () => {
   const [active, setActive] = useState(0);
   const sectionRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
-  const titleInView = useInView(titleRef, { once: true, margin: "-100px" });
+  const titleInView = useInView(titleRef, { once: false, margin: "-60px" });
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const x = useTransform(scrollYProgress, [0, 1], [100, -100]);
   const rotate3d = useTransform(scrollYProgress, [0, 0.5, 1], [8, 0, -8]);
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0.5]);
+  const sectionScale = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.95, 1, 1, 0.97]);
 
-  // Auto-cycle through screenshots
+  const titleY = useTransform(scrollYProgress, [0, 0.3], [50, 0]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setActive((prev) => (prev + 1) % screens.length);
@@ -41,7 +45,11 @@ const ScreenshotsSection = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative py-24 sm:py-32 overflow-hidden">
+    <motion.section
+      ref={sectionRef}
+      style={{ opacity: sectionOpacity, scale: sectionScale }}
+      className="relative py-24 sm:py-32 overflow-hidden will-change-transform"
+    >
       {/* Background glow */}
       <motion.div
         animate={{ scale: [1, 1.2, 1], opacity: [0.03, 0.06, 0.03] }}
@@ -52,20 +60,39 @@ const ScreenshotsSection = () => {
       <div className="container mx-auto px-6">
         <motion.div
           ref={titleRef}
-          initial={{ opacity: 0, y: 40 }}
-          animate={titleInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          style={{ y: titleY, opacity: titleOpacity }}
           className="text-center mb-16"
         >
-          <span className="text-sm font-semibold text-accent uppercase tracking-widest">App Preview</span>
+          <motion.span
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={titleInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
+            transition={{ type: "spring", delay: 0.2 }}
+            className="inline-block text-sm font-semibold text-accent uppercase tracking-widest glass px-4 py-1.5 rounded-full premium-glow"
+          >
+            App Preview
+          </motion.span>
           <h2 className="font-display text-4xl sm:text-5xl font-bold mt-3 mb-4">
-            Beautifully crafted.
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              animate={titleInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.3 }}
+              className="inline-block"
+            >
+              Beautifully crafted.
+            </motion.span>
             <br />
-            <span className="text-gradient-primary">Every screen.</span>
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              animate={titleInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.5 }}
+              className="inline-block text-gradient-primary"
+            >
+              Every screen.
+            </motion.span>
           </h2>
         </motion.div>
 
-        {/* Main phone preview with 3D perspective */}
+        {/* Main phone preview */}
         <div className="flex flex-col items-center gap-10" style={{ perspective: "1500px" }}>
           <motion.div
             key={active}
@@ -79,12 +106,7 @@ const ScreenshotsSection = () => {
               style={{ rotateX: rotate3d }}
               className="w-[260px] h-[520px] sm:w-[300px] sm:h-[600px] phone-mockup"
             >
-              <img
-                src={screens[active].src}
-                alt={screens[active].label}
-                className="w-full h-full object-cover"
-              />
-              {/* Screen glare */}
+              <img src={screens[active].src} alt={screens[active].label} className="w-full h-full object-cover" />
               <motion.div
                 animate={{ opacity: [0, 0.3, 0], x: ["-100%", "200%"] }}
                 transition={{ duration: 3, repeat: Infinity, repeatDelay: 5 }}
@@ -97,16 +119,15 @@ const ScreenshotsSection = () => {
             <div className="absolute -inset-8 -z-10 rounded-[3rem] bg-primary/8 blur-[60px]" />
           </motion.div>
 
-          {/* Labels with animated underline */}
+          {/* Labels */}
           <motion.div
             key={`label-${active}`}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 15, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             className="text-center"
           >
             <h3 className="font-display text-2xl font-bold">{screens[active].label}</h3>
             <p className="text-muted-foreground">{screens[active].description}</p>
-            {/* Progress dots */}
             <div className="flex gap-2 justify-center mt-4">
               {screens.map((_, i) => (
                 <motion.button
@@ -121,7 +142,7 @@ const ScreenshotsSection = () => {
             </div>
           </motion.div>
 
-          {/* Thumbnail strip with glow on active */}
+          {/* Thumbnail strip */}
           <div className="flex gap-3 overflow-x-auto pb-4 max-w-full scrollbar-hide">
             {screens.map((screen, i) => (
               <motion.button
@@ -153,7 +174,7 @@ const ScreenshotsSection = () => {
       <motion.div style={{ x }} className="absolute bottom-8 whitespace-nowrap font-display text-[120px] font-bold text-foreground/[0.02] select-none pointer-events-none">
         NIGHTLIBRARY • SECURE • PRIVATE • POWERFUL • NIGHTLIBRARY • SECURE • PRIVATE •
       </motion.div>
-    </section>
+    </motion.section>
   );
 };
 
