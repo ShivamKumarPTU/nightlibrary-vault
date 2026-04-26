@@ -1,6 +1,7 @@
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { Lock, Camera, Globe, Film, LayoutGrid, Zap, Share2, Settings } from "lucide-react";
+import { RevealLine, WordCascade } from "./TextReveal";
 
 const features = [
   { icon: Lock, title: "Privacy & Security", description: "App lock, biometric auth, auto-lock, hidden gallery, secure vault storage, emergency lock.", size: "lg:col-span-2 lg:row-span-2", tone: "primary" },
@@ -73,7 +74,7 @@ const FeatureCard = ({ feature, index }: { feature: (typeof features)[0]; index:
 
         <div>
           <motion.h3 initial={{ opacity: 0, y: 14 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }} transition={{ duration: 0.5, delay: 0.08 }} className="font-display text-2xl font-semibold leading-tight">
-            {feature.title}
+            <RevealLine delay={0.04}>{feature.title}</RevealLine>
           </motion.h3>
           <motion.p initial={{ opacity: 0, y: 10 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }} transition={{ duration: 0.5, delay: 0.16 }} className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
             {feature.description}
@@ -98,15 +99,15 @@ const SectionTitle = ({ badge, title1, title2, subtitle }: { badge: string; titl
       </motion.span>
       <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mt-5 mb-4 leading-tight">
         <motion.span initial={{ opacity: 0, y: 20 }} animate={titleInView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3, duration: 0.6 }} className="inline-block">
-          {title1}
+          <RevealLine delay={0.05}>{title1}</RevealLine>
         </motion.span>
         <br />
         <motion.span initial={{ opacity: 0, y: 20 }} animate={titleInView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5, duration: 0.6 }} className="inline-block text-gradient-primary">
-          {title2}
+          <RevealLine delay={0.12}>{title2}</RevealLine>
         </motion.span>
       </h2>
       <motion.p initial={{ opacity: 0, y: 12 }} animate={titleInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }} transition={{ delay: 0.6 }} className="text-muted-foreground text-lg max-w-2xl">
-        {subtitle}
+        <WordCascade text={subtitle} delay={0.08} className="justify-start" />
       </motion.p>
     </motion.div>
   );
