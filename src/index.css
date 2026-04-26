@@ -148,6 +148,22 @@
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
   }
+
+  .hero-cylinder-spin {
+    animation: hero-cylinder-spin 22s linear infinite;
+  }
+
+  @keyframes hero-cylinder-spin {
+    0% { transform: rotateX(-4deg) rotateY(0deg); }
+    50% { transform: rotateX(4deg) rotateY(-180deg); }
+    100% { transform: rotateX(-4deg) rotateY(-360deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-cylinder-spin {
+      animation-duration: 80s;
+    }
+  }
 }
 
 /* Scrollbar */
