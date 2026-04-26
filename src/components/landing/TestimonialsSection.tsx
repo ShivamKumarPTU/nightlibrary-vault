@@ -1,6 +1,7 @@
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Quote, Star } from "lucide-react";
+import { RevealLine, WordCascade } from "./TextReveal";
 
 const testimonials = [
   {
@@ -75,7 +76,7 @@ const TestimonialCard = ({ t, index }: { t: typeof testimonials[0]; index: numbe
         ))}
       </div>
 
-      <p className="text-foreground/90 text-sm leading-relaxed mb-5 relative z-10">"{t.text}"</p>
+      <p className="text-foreground/90 text-sm leading-relaxed mb-5 relative z-10"><WordCascade text={`“${t.text}”`} delay={0.05} className="justify-start" /></p>
 
       <div className="flex items-center gap-3 relative z-10">
         <motion.div
@@ -85,8 +86,8 @@ const TestimonialCard = ({ t, index }: { t: typeof testimonials[0]; index: numbe
           {t.avatar}
         </motion.div>
         <div>
-          <p className="font-display font-semibold text-sm">{t.name}</p>
-          <p className="text-xs text-muted-foreground">{t.role}</p>
+          <p className="font-display font-semibold text-sm"><RevealLine>{t.name}</RevealLine></p>
+          <p className="text-xs text-muted-foreground"><RevealLine delay={0.05}>{t.role}</RevealLine></p>
         </div>
       </div>
 
@@ -138,8 +139,8 @@ const TestimonialsSection = () => {
           >
             Testimonials
           </motion.span>
-          <h2 className="font-display text-4xl sm:text-5xl font-bold mt-5">
-            Loved by <span className="text-gradient-warm">thousands</span>
+          <h2 className="font-display text-4xl sm:text-5xl font-bold mt-5 overflow-hidden">
+            <RevealLine>Loved by</RevealLine> <RevealLine delay={0.1} className="text-gradient-warm">thousands</RevealLine>
           </h2>
         </motion.div>
 
