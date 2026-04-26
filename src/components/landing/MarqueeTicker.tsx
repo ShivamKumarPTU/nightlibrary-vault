@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Shield, Download, Zap, Lock, Eye, Star } from "lucide-react";
 import { useRef } from "react";
+import { RevealLine } from "./TextReveal";
 
 const items = [
   { icon: Shield, text: "256-bit Encryption" },
@@ -57,7 +58,7 @@ const MarqueeTicker = () => {
             >
               <item.icon className="w-4 h-4 text-primary" />
             </motion.div>
-            <span className="text-sm font-medium text-muted-foreground">{item.text}</span>
+            <span className="text-sm font-medium text-muted-foreground"><RevealLine delay={(i % 6) * 0.025}>{item.text}</RevealLine></span>
           </motion.div>
         ))}
       </motion.div>
@@ -81,7 +82,7 @@ const MarqueeTicker = () => {
             >
               <item.icon className="w-4 h-4 text-accent" />
             </motion.div>
-            <span className="text-sm font-medium text-muted-foreground">{item.text}</span>
+            <span className="text-sm font-medium text-muted-foreground"><RevealLine delay={(i % 6) * 0.025}>{item.text}</RevealLine></span>
           </motion.div>
         ))}
       </motion.div>

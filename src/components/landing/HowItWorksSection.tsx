@@ -2,6 +2,7 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Download, FolderLock, Play, Shield } from "lucide-react";
 import AnimatedCounter from "./AnimatedCounter";
+import { RevealLine, WordCascade } from "./TextReveal";
 
 const steps = [
   { icon: Download, title: "Import or Download", description: "Add files from your device, camera, or download from the web.", number: "01", color: "from-primary to-primary/60" },
@@ -56,8 +57,8 @@ const StepCard = ({ step, index, sectionInView }: { step: typeof steps[0]; index
           />
         </motion.div>
 
-        <h3 className="font-display text-lg font-semibold mb-2 relative z-10">{step.title}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed relative z-10">{step.description}</p>
+        <h3 className="font-display text-lg font-semibold mb-2 relative z-10"><RevealLine delay={0.04}>{step.title}</RevealLine></h3>
+        <p className="text-sm text-muted-foreground leading-relaxed relative z-10"><WordCascade text={step.description} delay={0.08} className="justify-start" /></p>
 
         {/* Hover glow */}
         <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/0 group-hover:via-primary/40 to-transparent transition-all duration-500" />
@@ -102,8 +103,8 @@ const HowItWorksSection = () => {
           className="text-center mb-16"
         >
           <span className="text-sm font-semibold text-glow-warm uppercase tracking-widest">How It Works</span>
-          <h2 className="font-display text-4xl sm:text-5xl font-bold mt-3">
-            Simple as <span className="text-gradient-warm">1-2-3-4</span>
+          <h2 className="font-display text-4xl sm:text-5xl font-bold mt-3 overflow-hidden">
+            <RevealLine>Simple as</RevealLine> <RevealLine delay={0.1} className="text-gradient-warm">1-2-3-4</RevealLine>
           </h2>
         </motion.div>
 

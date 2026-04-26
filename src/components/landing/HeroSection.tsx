@@ -1,5 +1,5 @@
-import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
-import { MouseEvent, ReactNode, useRef, useState } from "react";
+import { motion, type MotionStyle, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
+import { CSSProperties, MouseEvent, ReactNode, useRef, useState } from "react";
 import { Download, Play, Sparkles } from "lucide-react";
 import screenshotHome from "@/assets/screenshot-home.png";
 import screenshotVault from "@/assets/screenshot-vault.png";
@@ -152,8 +152,9 @@ const CylindricalAppCarousel = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
   const [active, setActive] = useState(0);
-  const radius = 260;
   const step = 360 / screens.length;
+  const halfStepSin = Math.sin((Math.PI / screens.length));
+  const cardWidthMultiplier = Number((2 * halfStepSin * 0.98).toFixed(3));
   const { scrollYProgress } = useScroll({ target: carouselRef, offset: ["start end", "end start"] });
   const scrollRotateX = useTransform(scrollYProgress, [0, 0.5, 1], [10, 0, -8]);
   const scrollY = useTransform(scrollYProgress, [0, 0.5, 1], [34, 0, -26]);
@@ -162,7 +163,14 @@ const CylindricalAppCarousel = () => {
   return (
     <motion.div
       ref={carouselRef}
-      style={{ y: scrollY, scale: scrollScale, rotateX: scrollRotateX, perspective: "1250px" }}
+      style={{
+        y: scrollY,
+        scale: scrollScale,
+        rotateX: scrollRotateX,
+        perspective: "1250px",
+        "--cylinder-radius": "clamp(248px, 29vw, 280px)",
+        "--card-width": `calc(var(--cylinder-radius) * ${cardWidthMultiplier})`,
+      } as unknown as MotionStyle & CSSProperties}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className="relative flex min-h-[500px] w-full items-center justify-center sm:min-h-[600px]"
@@ -174,7 +182,7 @@ const CylindricalAppCarousel = () => {
       </motion.div>
 
       <div
-        className="hero-cylinder-spin relative h-[380px] w-[160px] sm:h-[420px] sm:w-[176px]"
+        className="hero-cylinder-spin relative w-[var(--card-width)] aspect-[456/1000]"
         style={{ transformStyle: "preserve-3d", animationPlayState: hovered ? "paused" : "running" }}
       >
         {screens.map((screen, index) => (
@@ -182,7 +190,7 @@ const CylindricalAppCarousel = () => {
             key={screen.label}
             className="absolute inset-0 will-change-transform"
             style={{
-              transform: `rotateY(${index * step}deg) translateZ(${radius}px)`,
+              transform: `rotateY(${index * step}deg) translateZ(var(--cylinder-radius))`,
               backfaceVisibility: "hidden",
             }}
           >
@@ -197,7 +205,7 @@ const CylindricalAppCarousel = () => {
               whileTap={{ scale: 0.97 }}
               className="group relative h-full w-full overflow-hidden rounded-[1.8rem] border border-border/75 bg-card shadow-phone outline-none transition-colors duration-300 hover:border-primary/70"
             >
-              <img src={screen.src} alt={`${screen.label} app screenshot`} className="h-full w-full object-cover" style={crispImageStyle} />
+              <img src={screen.src} alt={`${screen.label} app screenshot`} className="h-full w-full object-contain" style={crispImageStyle} />
               <motion.span
                 className="absolute inset-0 opacity-0 group-hover:opacity-100"
                 style={{ background: "linear-gradient(110deg, transparent 34%, hsl(var(--foreground) / 0.14) 48%, transparent 62%)" }}
