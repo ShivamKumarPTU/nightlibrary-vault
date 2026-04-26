@@ -170,7 +170,7 @@ const CylindricalAppCarousel = () => {
         perspective: "1250px",
         "--cylinder-radius": "clamp(248px, 29vw, 280px)",
         "--card-width": `calc(var(--cylinder-radius) * ${cardWidthMultiplier})`,
-      } as MotionStyle & CSSProperties}
+      } as unknown as MotionStyle & CSSProperties}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className="relative flex min-h-[500px] w-full items-center justify-center sm:min-h-[600px]"
