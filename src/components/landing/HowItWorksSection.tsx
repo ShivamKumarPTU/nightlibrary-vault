@@ -1,14 +1,14 @@
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, useScroll, useSpring, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Download, FolderLock, Play, Shield } from "lucide-react";
 import AnimatedCounter from "./AnimatedCounter";
 import { RevealLine, WordCascade } from "./TextReveal";
 
 const steps = [
-  { icon: Download, title: "Import or Download", description: "Add files from your device, camera, or download from the web.", number: "01", color: "from-primary to-primary/60" },
-  { icon: FolderLock, title: "Auto-Secure", description: "Everything is instantly encrypted and hidden from your gallery.", number: "02", color: "from-accent to-accent/60" },
-  { icon: Play, title: "Enjoy & Organize", description: "Play, sort, and manage your media with powerful built-in tools.", number: "03", color: "from-glow-warm to-glow-warm/60" },
-  { icon: Shield, title: "Stay Protected", description: "Biometric lock, auto-lock, and zero data sharing keep you safe.", number: "04", color: "from-primary to-accent" },
+  { icon: Download, title: "Import or Download", description: "Add files from your device, camera, or download from the web.", color: "from-primary to-primary/60" },
+  { icon: FolderLock, title: "Auto-Secure", description: "Everything is instantly encrypted and hidden from your gallery.", color: "from-accent to-accent/60" },
+  { icon: Play, title: "Enjoy & Organize", description: "Play, sort, and manage your media with powerful built-in tools.", color: "from-glow-warm to-glow-warm/60" },
+  { icon: Shield, title: "Stay Protected", description: "Biometric lock, auto-lock, and zero data sharing keep you safe.", color: "from-primary to-accent" },
 ];
 
 const StepCard = ({ step, index, sectionInView }: { step: typeof steps[0]; index: number; sectionInView: boolean }) => {
@@ -19,35 +19,34 @@ const StepCard = ({ step, index, sectionInView }: { step: typeof steps[0]; index
     offset: ["start end", "end start"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [90, 0, 0, -40]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.75, 1], [0, 1, 1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [0.82, 1, 1, 0.88]);
-  const rotateZ = useTransform(
-    scrollYProgress,
-    [0, 0.25, 0.75, 1],
-    [index % 2 === 0 ? 3 : -3, 0, 0, index % 2 === 0 ? -2 : 2]
-  );
+  const y = useSpring(useTransform(scrollYProgress, [0, 0.32, 0.78, 1], [84, 0, 0, -28]), { stiffness: 120, damping: 24 });
+  const opacity = useTransform(scrollYProgress, [0, 0.22, 0.82, 1], [0, 1, 1, 0.72]);
+  const scale = useSpring(useTransform(scrollYProgress, [0, 0.28, 0.78, 1], [0.9, 1, 1, 0.96]), { stiffness: 130, damping: 20 });
+  const rotateZ = useSpring(useTransform(scrollYProgress, [0, 0.28, 0.78, 1], [index % 2 === 0 ? 2.5 : -2.5, 0, 0, index % 2 === 0 ? -1.25 : 1.25]), { stiffness: 110, damping: 22 });
+  const glowOpacity = useTransform(scrollYProgress, [0.08, 0.32, 0.72, 1], [0, 0.7, 0.45, 0]);
 
   return (
     <motion.div
       ref={ref}
       style={{ y, opacity, scale, rotate: rotateZ }}
-      whileHover={{ y: -8, scale: 1.03 }}
-      className="relative group will-change-transform"
+      whileHover={{ y: -14, scale: 1.045, rotate: 0 }}
+      transition={{ type: "spring", stiffness: 260, damping: 18 }}
+      className="relative group h-full will-change-transform"
     >
-      <div className="bg-gradient-card rounded-2xl p-6 glow-border h-full relative overflow-hidden premium-glow">
-        {/* Large background number */}
+      <div className="bg-gradient-card rounded-2xl p-6 glow-border h-full relative overflow-hidden premium-glow transition-[box-shadow,transform,border-color] duration-500 ease-out group-hover:shadow-[var(--shadow-premium)] group-hover:border-primary/40">
         <motion.div
-          style={{ opacity: useTransform(scrollYProgress, [0.1, 0.3], [0, 0.04]) }}
-          className="text-7xl font-display font-bold absolute top-2 right-4 select-none text-foreground"
-        >
-          {step.number}
-        </motion.div>
-
+          style={{ opacity: glowOpacity }}
+          className="pointer-events-none absolute -inset-12 bg-[radial-gradient(circle_at_50%_0%,hsl(var(--primary)/0.32),transparent_58%)] blur-2xl transition-opacity duration-500 group-hover:opacity-100"
+        />
+        <motion.div
+          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+          style={{ background: "linear-gradient(120deg, transparent 20%, hsl(var(--foreground) / 0.08) 42%, transparent 62%)" }}
+        />
         {/* Icon with gradient background */}
         <motion.div
-          whileHover={{ rotate: [-5, 5, 0], scale: 1.1 }}
-          className={`w-12 h-12 rounded-xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-4 relative`}
+          whileHover={{ rotate: [-6, 6, 0], scale: 1.12 }}
+          transition={{ type: "spring", stiffness: 300, damping: 14 }}
+          className={`w-12 h-12 rounded-xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-4 relative z-10 shadow-[0_16px_36px_-18px_hsl(var(--primary)/0.7)]`}
         >
           <step.icon className="w-6 h-6 text-primary-foreground" />
           <motion.div
