@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, type MotionStyle, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
 import { CSSProperties, MouseEvent, ReactNode, useRef, useState } from "react";
 import { Download, Play, Sparkles } from "lucide-react";
 import screenshotHome from "@/assets/screenshot-home.png";
@@ -170,7 +170,7 @@ const CylindricalAppCarousel = () => {
         perspective: "1250px",
         "--cylinder-radius": "clamp(248px, 29vw, 280px)",
         "--card-width": `calc(var(--cylinder-radius) * ${cardWidthMultiplier})`,
-      } as CSSProperties}
+      } as MotionStyle & CSSProperties}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className="relative flex min-h-[500px] w-full items-center justify-center sm:min-h-[600px]"
