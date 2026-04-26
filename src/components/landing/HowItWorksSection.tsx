@@ -109,7 +109,7 @@ const HowItWorksSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step, i) => (
-            <StepCard key={step.number} step={step} index={i} sectionInView={inView} />
+            <StepCard key={step.title} step={step} index={i} sectionInView={inView} />
           ))}
         </div>
       </div>
