@@ -9,7 +9,6 @@ import Navbar from "@/components/landing/Navbar";
 import HeroSection from "@/components/landing/HeroSection";
 import MarqueeTicker from "@/components/landing/MarqueeTicker";
 import FeaturesSection from "@/components/landing/FeaturesSection";
-import ScreenshotsSection from "@/components/landing/ScreenshotsSection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import CTASection from "@/components/landing/CTASection";
@@ -34,8 +33,6 @@ const Index = () => (
       <MarqueeTicker />
       <SectionDivider />
       <FeaturesSection />
-      <SectionDivider />
-      <ScreenshotsSection />
       <SectionDivider />
       <HowItWorksSection />
       <SectionDivider />
