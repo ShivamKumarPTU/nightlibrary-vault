@@ -152,7 +152,7 @@ const CylindricalAppCarousel = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
   const [active, setActive] = useState(0);
-  const radius = 235;
+  const radius = 260;
   const step = 360 / screens.length;
   const { scrollYProgress } = useScroll({ target: carouselRef, offset: ["start end", "end start"] });
   const scrollRotateX = useTransform(scrollYProgress, [0, 0.5, 1], [10, 0, -8]);
@@ -174,7 +174,7 @@ const CylindricalAppCarousel = () => {
       </motion.div>
 
       <div
-        className="hero-cylinder-spin relative h-[390px] w-[170px] sm:h-[455px] sm:w-[198px]"
+        className="hero-cylinder-spin relative h-[380px] w-[160px] sm:h-[420px] sm:w-[176px]"
         style={{ transformStyle: "preserve-3d", animationPlayState: hovered ? "paused" : "running" }}
       >
         {screens.map((screen, index) => (
@@ -191,9 +191,9 @@ const CylindricalAppCarousel = () => {
               onClick={() => setActive(index)}
               onHoverStart={() => setActive(index)}
               initial={{ opacity: 0, y: 36, scale: 0.86 }}
-              animate={{ opacity: 1, y: 0, scale: active === index ? 1.045 : 1 }}
+              animate={{ opacity: 1, y: 0, scale: active === index ? 1.025 : 0.98 }}
               transition={{ delay: 1.35 + index * 0.055, type: "spring", stiffness: 110, damping: 16 }}
-              whileHover={{ y: -14, scale: 1.08 }}
+              whileHover={{ y: -12, scale: 1.045 }}
               whileTap={{ scale: 0.97 }}
               className="group relative h-full w-full overflow-hidden rounded-[1.8rem] border border-border/75 bg-card shadow-phone outline-none transition-colors duration-300 hover:border-primary/70"
             >
