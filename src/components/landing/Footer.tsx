@@ -1,6 +1,7 @@
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { Moon, Github, Twitter, Mail } from "lucide-react";
 import { useRef } from "react";
+import { RevealLine } from "./TextReveal";
 
 const footerLinks = [
   { label: "Features", href: "#features" },
@@ -44,7 +45,7 @@ const Footer = () => {
             >
               <Moon className="w-6 h-6 text-primary" />
             </motion.div>
-            <span className="font-display text-xl font-bold">NightLibrary</span>
+            <span className="font-display text-xl font-bold"><RevealLine>NightLibrary</RevealLine></span>
           </motion.div>
 
           {/* Links with stagger */}
@@ -59,7 +60,7 @@ const Footer = () => {
                 whileHover={{ y: -2, color: "hsl(270 80% 60%)" }}
                 className="relative text-sm text-muted-foreground transition-colors group"
               >
-                {link.label}
+                <RevealLine delay={i * 0.04}>{link.label}</RevealLine>
                 <motion.span
                   className="absolute -bottom-0.5 left-0 right-0 h-[1px] bg-primary origin-left"
                   initial={{ scaleX: 0 }}
@@ -102,7 +103,7 @@ const Footer = () => {
             transition={{ delay: 0.6 }}
             className="text-sm text-muted-foreground"
           >
-            © 2026 NightLibrary. Your media, your rules.
+            <RevealLine>© 2026 NightLibrary. Your media, your rules.</RevealLine>
           </motion.p>
         </div>
       </motion.div>
