@@ -2,6 +2,7 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Download, ArrowRight } from "lucide-react";
 import AnimatedCounter from "./AnimatedCounter";
+import { RevealLine, WordCascade } from "./TextReveal";
 
 const CTASection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -101,9 +102,9 @@ const CTASection = () => {
               transition={{ delay: 0.2 }}
               className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6"
             >
-              Ready to take control
+              <RevealLine>Ready to take control</RevealLine>
               <br />
-              of your media?
+              <RevealLine delay={0.12}>of your media?</RevealLine>
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -111,7 +112,7 @@ const CTASection = () => {
               transition={{ delay: 0.4 }}
               className="text-primary-foreground/80 text-lg max-w-xl mx-auto mb-10"
             >
-              Join thousands who trust NightLibrary with their private media. Free to download, forever.
+              <WordCascade text="Join thousands who trust NightLibrary with their private media. Free to download, forever." />
             </motion.p>
 
             <motion.div
