@@ -149,41 +149,82 @@ const GlowingButton = ({ children, primary = false, icon: Icon, delay = 0 }: any
 };
 
 const CylindricalAppCarousel = () => {
-  const radius = 260;
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState(false);
+  const [active, setActive] = useState(0);
+  const radius = 235;
   const step = 360 / screens.length;
+  const { scrollYProgress } = useScroll({ target: carouselRef, offset: ["start end", "end start"] });
+  const scrollRotateX = useTransform(scrollYProgress, [0, 0.5, 1], [10, 0, -8]);
+  const scrollY = useTransform(scrollYProgress, [0, 0.5, 1], [34, 0, -26]);
+  const scrollScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.9, 1, 0.96]);
 
   return (
-    <div className="relative flex min-h-[540px] w-full items-center justify-center sm:min-h-[620px]" style={{ perspective: "1200px" }}>
-      <motion.div
-        animate={{ rotateY: -360 }}
-        transition={{ duration: 34, repeat: Infinity, ease: "linear" }}
-        className="relative h-[430px] w-[260px] sm:h-[500px] sm:w-[300px]"
-        style={{ transformStyle: "preserve-3d" }}
+    <motion.div
+      ref={carouselRef}
+      style={{ y: scrollY, scale: scrollScale, rotateX: scrollRotateX, perspective: "1250px" }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="relative flex min-h-[500px] w-full items-center justify-center sm:min-h-[600px]"
+    >
+      <motion.div className="absolute top-8 z-20 text-center" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2.15, type: "spring", stiffness: 120 }}>
+        <span className="glass premium-glow inline-flex rounded-full px-4 py-2 font-display text-sm text-muted-foreground">
+          {screens[active].label} preview
+        </span>
+      </motion.div>
+
+      <div
+        className="hero-cylinder-spin relative h-[390px] w-[170px] sm:h-[455px] sm:w-[198px]"
+        style={{ transformStyle: "preserve-3d", animationPlayState: hovered ? "paused" : "running" }}
       >
         {screens.map((screen, index) => (
-          <motion.div
+          <div
             key={screen.label}
-            className="absolute inset-0 rounded-[2rem] border border-border/70 bg-card shadow-phone overflow-hidden will-change-transform"
+            className="absolute inset-0 will-change-transform"
             style={{
               transform: `rotateY(${index * step}deg) translateZ(${radius}px)`,
               backfaceVisibility: "hidden",
             }}
           >
-            <img src={screen.src} alt={`${screen.label} app screenshot`} className="h-full w-full object-cover" style={crispImageStyle} />
-          </motion.div>
+            <motion.button
+              type="button"
+              onClick={() => setActive(index)}
+              onHoverStart={() => setActive(index)}
+              initial={{ opacity: 0, y: 36, scale: 0.86 }}
+              animate={{ opacity: 1, y: 0, scale: active === index ? 1.045 : 1 }}
+              transition={{ delay: 1.35 + index * 0.055, type: "spring", stiffness: 110, damping: 16 }}
+              whileHover={{ y: -14, scale: 1.08 }}
+              whileTap={{ scale: 0.97 }}
+              className="group relative h-full w-full overflow-hidden rounded-[1.8rem] border border-border/75 bg-card shadow-phone outline-none transition-colors duration-300 hover:border-primary/70"
+            >
+              <img src={screen.src} alt={`${screen.label} app screenshot`} className="h-full w-full object-cover" style={crispImageStyle} />
+              <motion.span
+                className="absolute inset-0 opacity-0 group-hover:opacity-100"
+                style={{ background: "linear-gradient(110deg, transparent 34%, hsl(var(--foreground) / 0.14) 48%, transparent 62%)" }}
+                animate={{ x: ["-120%", "150%"] }}
+                transition={{ duration: 1.15, repeat: Infinity, repeatDelay: 0.7 }}
+              />
+              <span className="absolute inset-x-4 bottom-4 translate-y-4 rounded-full border border-border/60 bg-background/70 px-3 py-1.5 text-xs font-medium text-foreground opacity-0 backdrop-blur-xl transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                {screen.label}
+              </span>
+              {active === index && <span className="pointer-events-none absolute inset-0 rounded-[1.8rem] border-2 border-primary shadow-[0_0_34px_hsl(var(--primary)/0.38)]" />}
+            </motion.button>
+          </div>
         ))}
-      </motion.div>
+      </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center gap-2 sm:bottom-0">
+      <div className="absolute inset-x-0 bottom-6 z-20 flex justify-center gap-2 sm:bottom-5">
         {screens.map((screen, index) => (
-          <span
+          <button
             key={`dot-${screen.label}`}
-            className="h-1.5 w-1.5 rounded-full bg-primary/70 shadow-[0_0_14px_hsl(var(--primary)/0.55)]"
-            style={{ opacity: index % 3 === 0 ? 1 : 0.42 }}
+            type="button"
+            aria-label={`Show ${screen.label}`}
+            onClick={() => setActive(index)}
+            className={`h-1.5 rounded-full bg-primary shadow-[0_0_14px_hsl(var(--primary)/0.55)] transition-all duration-300 ${active === index ? "w-8 opacity-100" : "w-1.5 opacity-40 hover:opacity-80"}`}
           />
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
