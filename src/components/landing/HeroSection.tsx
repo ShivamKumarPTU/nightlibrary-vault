@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
-import { MouseEvent, useRef, useState } from "react";
+import { MouseEvent, ReactNode, useRef, useState } from "react";
 import { Download, Play, Sparkles } from "lucide-react";
 import screenshotHome from "@/assets/screenshot-home.png";
 import screenshotVault from "@/assets/screenshot-vault.png";
@@ -52,7 +52,7 @@ const CharReveal = ({ children, delay = 0, className = "" }: { children: string;
   </span>
 );
 
-const MagneticWord = ({ children, className = "" }: { children: string; className?: string }) => (
+const MagneticWord = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
   <motion.span
     whileHover={{ y: -10, scale: 1.035, textShadow: "0 14px 34px hsl(var(--primary) / 0.45)" }}
     transition={{ type: "spring", stiffness: 320, damping: 18 }}
