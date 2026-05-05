@@ -2,7 +2,10 @@ import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Moon, Download } from "lucide-react";
 import { useState } from "react";
 
-const navItems = ["Features", "Preview", "How it Works"];
+const navItems = ["Features", "How it Works","Get in Touch"];
+
+import FlipLink from "./FlipLink";
+import FlipButton from "./FlipButton";
 
 const Navbar = () => {
   const { scrollY } = useScroll();
@@ -36,51 +39,30 @@ const Navbar = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
           >
-            NightLibrary
+            NightVault
           </motion.span>
         </motion.div>
 
         <div className="hidden sm:flex items-center gap-8">
           {navItems.map((item, i) => (
-            <motion.a
+            <FlipLink
               key={item}
-              href={`#${item.toLowerCase().replace(/\s/g, "-")}`}
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 + i * 0.1 }}
-              whileHover={{ y: -2, color: "hsl(270 80% 70%)" }}
-              className="relative text-sm text-muted-foreground hover:text-foreground transition-colors group"
+              onClick={() => {
+                const sectionId = item.toLowerCase().replace(/\s/g, "-");
+                document.getElementById(sectionId)?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              }}
             >
               {item}
-              <motion.span
-                className="absolute -bottom-1 left-0 right-0 h-[2px] bg-gradient-to-r from-primary to-accent origin-left"
-                initial={{ scaleX: 0 }}
-                whileHover={{ scaleX: 1 }}
-                transition={{ duration: 0.3 }}
-              />
-            </motion.a>
+            </FlipLink>
           ))}
         </div>
 
-        <motion.button
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.6 }}
-          whileHover={{ scale: 1.05, boxShadow: "0 0 30px hsl(270 80% 60% / 0.3)" }}
-          whileTap={{ scale: 0.95 }}
-          className="relative bg-gradient-cta px-5 py-2.5 rounded-xl font-display font-semibold text-sm text-primary-foreground flex items-center gap-2 overflow-hidden"
-        >
-          <motion.div
-            className="absolute inset-0"
-            style={{
-              background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%)",
-            }}
-            animate={{ x: ["-100%", "200%"] }}
-            transition={{ duration: 2, repeat: Infinity, repeatDelay: 5 }}
-          />
-          <Download className="w-4 h-4 relative z-10" />
-          <span className="relative z-10">Download</span>
-        </motion.button>
+        <FlipButton primary icon={Download} delay={0.6} className="scale-90">
+          Launching Soon
+        </FlipButton>
       </div>
     </motion.nav>
   );

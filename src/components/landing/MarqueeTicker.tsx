@@ -4,18 +4,17 @@ import { useRef } from "react";
 import { RevealLine } from "./TextReveal";
 
 const items = [
-  { icon: Shield, text: "256-bit Encryption" },
-  { icon: Lock, text: "Biometric Lock" },
-  { icon: Download, text: "Background Downloads" },
+  { icon: Shield, text: "Military Grade Encryption" },
+  { icon: Lock, text: "Fingerprint Lock" },
+  { icon: Download, text: "Downloads in Background" },
   { icon: Zap, text: "Lightning Fast" },
-  { icon: Eye, text: "Zero Tracking" },
-  { icon: Star, text: "4.8★ Rating" },
+  { icon: Eye, text: "No Data Tracking" },
   { icon: Shield, text: "Private Vault" },
   { icon: Lock, text: "Auto-Lock" },
-  { icon: Download, text: "Multi-Platform" },
-  { icon: Zap, text: "Optimized Storage" },
+ 
+  { icon: Zap, text: "Smart Storage" },
   { icon: Eye, text: "Hidden Gallery" },
-  { icon: Star, text: "100K+ Users" },
+
 ];
 
 const MarqueeTicker = () => {
@@ -33,7 +32,7 @@ const MarqueeTicker = () => {
     <motion.div
       ref={ref}
       style={{ opacity }}
-      className="relative py-8 overflow-hidden border-y border-border/30"
+      className="relative py-8 overflow-hidden"
     >
       {/* Fade edges */}
       <div className="absolute left-0 top-0 bottom-0 w-32 z-10" style={{ background: "linear-gradient(90deg, hsl(240 10% 3%), transparent)" }} />

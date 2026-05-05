@@ -94,7 +94,7 @@ const HowItWorksSection = () => {
   const titleOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
 
   return (
-    <section ref={sectionRef} className="relative py-24 sm:py-32">
+    <section ref={sectionRef} id="how-it-works" className="relative py-24 sm:py-32">
       <div className="container mx-auto px-6">
         <motion.div
           ref={titleRef}

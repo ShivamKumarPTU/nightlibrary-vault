@@ -153,6 +153,14 @@
     animation: hero-cylinder-spin 22s linear infinite;
   }
 
+  .hero-screenshot {
+    image-rendering: crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: -moz-crisp-edges;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+
   @keyframes hero-cylinder-spin {
     0% { transform: rotateX(-4deg) rotateY(0deg); }
     50% { transform: rotateX(4deg) rotateY(-180deg); }
@@ -178,12 +186,53 @@
   border-radius: 3px;
 }
 
-/* Animated grid background */
-.grid-bg {
-  background-image:
-    linear-gradient(hsl(var(--border) / 0.3) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--border) / 0.3) 1px, transparent 1px);
-  background-size: 60px 60px;
+  .noise-overlay {
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    width: 200%;
+    height: 200%;
+    background: transparent url('http://assets.iceable.com/img/noise-transparent.png') repeat 0 0;
+    background-repeat: repeat;
+    opacity: .05;
+    visibility: visible;
+    z-index: 9999;
+    pointer-events: none;
+    animation: noise-animation .2s infinite;
+  }
+
+  @keyframes noise-animation {
+    0% { transform: translate(0,0) }
+    10% { transform: translate(-5%,-5%) }
+    20% { transform: translate(-10%,5%) }
+    30% { transform: translate(5%,-10%) }
+    40% { transform: translate(-5%,15%) }
+    50% { transform: translate(-10%,5%) }
+    60% { transform: translate(15%,0) }
+    70% { transform: translate(0,10%) }
+    80% { transform: translate(-15%,0) }
+    90% { transform: translate(10%,5%) }
+    100% { transform: translate(5%,0) }
+  }
+
+  .grid-bg {
+    background-image: 
+      linear-gradient(to right, hsl(var(--primary) / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--primary) / 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at center, black, transparent 80%);
+  }
+
+@layer components {
+  .glass {
+    @apply bg-background/40 backdrop-blur-md border border-white/10;
+  }
+  
+  .premium-glow {
+    box-shadow: 0 0 40px -10px hsl(var(--primary) / 0.3);
+  }
 }
 
 /* Noise texture */

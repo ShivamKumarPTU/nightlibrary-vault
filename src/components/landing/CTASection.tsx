@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { Download, ArrowRight } from "lucide-react";
 import AnimatedCounter from "./AnimatedCounter";
 import { RevealLine, WordCascade } from "./TextReveal";
+import FlipButton from "./FlipButton";
 
 const CTASection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -71,30 +72,44 @@ const CTASection = () => {
           ))}
 
           <div className="relative z-10 py-16 sm:py-24 px-8 text-center">
-            {/* Stats row */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ delay: 0.1 }}
-              className="flex justify-center gap-12 mb-10"
-            >
-              {[
-                { value: 100000, label: "Downloads", suffix: "+" },
-                { value: 4.8, label: "App Rating", suffix: "★", decimals: 1 },
-                { value: 50, label: "Countries", suffix: "+" },
-              ].map((stat, i) => (
-                <motion.div
-                  key={stat.label}
-                  whileHover={{ scale: 1.1 }}
-                  className="text-center"
-                >
-                  <div className="font-display text-3xl font-bold text-primary-foreground">
-                    <AnimatedCounter target={stat.value} suffix={stat.suffix} duration={2} decimals={stat.decimals || 0} />
-                  </div>
-                  <div className="text-sm text-primary-foreground/60">{stat.label}</div>
-                </motion.div>
-              ))}
-            </motion.div>
+           {/* Pre-launch badge */}
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+  transition={{ delay: 0.1 }}
+  className="flex flex-col items-center gap-4 mb-10"
+>
+  {/* Launching soon pill */}
+  <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-primary-foreground/20 bg-primary-foreground/5 backdrop-blur-sm">
+    <span className="relative flex h-2.5 w-2.5">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400" />
+    </span>
+    <span className="text-sm font-medium text-primary-foreground/90">
+      Launching Soon — Be the First to Try
+    </span>
+  </div>
+
+  {/* Real stats */}
+  <div className="flex justify-center gap-12">
+    {[
+      { value: "12+", label: "Features" },
+      { value: "AES-256", label: "Encryption" },
+      { value: "100%", label: "Free Forever" },
+    ].map((stat, i) => (
+      <motion.div
+        key={stat.label}
+        whileHover={{ scale: 1.1 }}
+        className="text-center"
+      >
+        <div className="font-display text-2xl sm:text-3xl font-bold text-primary-foreground">
+          {stat.value}
+        </div>
+        <div className="text-sm text-primary-foreground/60">{stat.label}</div>
+      </motion.div>
+    ))}
+  </div>
+</motion.div>
 
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -112,41 +127,33 @@ const CTASection = () => {
               transition={{ delay: 0.4 }}
               className="text-primary-foreground/80 text-lg max-w-xl mx-auto mb-10"
             >
-              <WordCascade text="Join thousands who trust NightLibrary with their private media. Free to download, forever." />
+              <WordCascade text="A privacy-first vault for your media. No accounts, no cloud, no compromises. Free forever." />
+          {/* <WordCascade text="A privacy-first vault for your media. No accounts, no cloud, no compromises. Free forever." /> */}  
+          { /*<WordCascade text="Join thousands who trust NightLibrary with their private media. Free to download, forever." />*/}
+              
             </motion.p>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ delay: 0.6 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+              className="flex flex-col sm:flex-row gap-6 justify-center items-center"
             >
-              <motion.button
-                whileHover={{ scale: 1.05, boxShadow: "0 0 50px rgba(255,255,255,0.3)" }}
-                whileTap={{ scale: 0.95 }}
-                className="group relative bg-primary-foreground text-background px-8 py-4 rounded-2xl font-display font-semibold text-lg flex items-center justify-center gap-2 overflow-hidden"
-              >
-                <motion.div
-                  className="absolute inset-0"
-                  style={{
-                    background: "linear-gradient(105deg, transparent 40%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.05) 55%, transparent 60%)",
-                  }}
-                  animate={{ x: ["-100%", "200%"] }}
-                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 4 }}
-                />
-                <Download className="w-5 h-5 relative z-10" />
-                <span className="relative z-10">Get NightLibrary</span>
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.1)" }}
-                whileTap={{ scale: 0.95 }}
-                className="border-2 border-primary-foreground/30 text-primary-foreground px-8 py-4 rounded-2xl font-display font-semibold text-lg flex items-center justify-center gap-2 transition-colors"
+              <FlipButton primary icon={Download}>
+                Get NightVault
+              </FlipButton>
+              
+              <FlipButton 
+                icon={ArrowRight} 
+                onClick={() => {
+                  document.getElementById("features")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }}
               >
                 Learn More
-                <motion.div animate={{ x: [0, 5, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                  <ArrowRight className="w-5 h-5" />
-                </motion.div>
-              </motion.button>
+              </FlipButton>
             </motion.div>
           </div>
         </motion.div>
